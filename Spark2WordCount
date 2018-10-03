@@ -1,0 +1,64 @@
+package com.srikanth.sparkcore
+
+import org.apache.spark.sql.SparkSession
+
+/**
+  * This program written by Srikanth Pendiyala on Jan 2018
+  * it is a spark2 tutorial in scala
+  *
+  */
+
+object HelloSpark2 {
+
+  def main(args: Array[String]) {
+
+    // Creating the sparksession object and inisiating the spark job with application name
+    val sparkSession = SparkSession.builder.master("local").appName("Spark2 word count").getOrCreate()
+
+    import sparkSession.implicits._
+
+    // Reading the data file to process
+    val data = sparkSession.read.text("src/main/resources/data.txt").as[String]
+    val words = data.flatMap(value => value.split("\\s+"))
+    val groupedWords = words.groupByKey(_.toLowerCase)
+
+    // Returning the wordcount of the file
+    val counts = groupedWords.count()
+    counts.show()
+
+  }
+
+}
+
+
+output:
+################################################################################################################
+
+18/10/03 07:18:39 INFO DAGScheduler: Job 4 finished: show at HelloSpark2.scala:16, took 1.571650 s
++--------------------+--------+
+|               value|count(1)|
++--------------------+--------+
+|        scalaversion|       1|
+|                   =|       1|
+|                  %%|       5|
+| librarydependencies|       1|
+|       "spark-mllib"|       1|
+|           resolvers|       1|
+|             "2.3.0"|       1|
+|"http://repositor...|       1|
+|             "mysql"|       1|
+|                 ++=|       2|
+|             "5.1.6"|       1|
+|        sparkversion|       1|
+|  "org.apache.spark"|       5|
+|         "spark-sql"|       1|
+|        "spark-core"|       1|
+|            "2.11.8"|       1|
+|        "spark-hive"|       1|
+|  "apache-snapshots"|       1|
+|                   )|       2|
+|                seq(|       2|
++--------------------+--------+
+only showing top 20 rows
+
+####################################################################################################################
